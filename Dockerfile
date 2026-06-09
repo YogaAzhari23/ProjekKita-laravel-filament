@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.3-cli
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -24,10 +24,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy existing application directory permissions
+# Copy application
 COPY --chown=www-data:www-data . /var/www
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
+# Install composer dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-CMD ["php-fpm"]
+# Expose port
+EXPOSE 8000
+
+# Start Laravel
+CMD php artisan serve --host=0.0.0.0 --port=8000
