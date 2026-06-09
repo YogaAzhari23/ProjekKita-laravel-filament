@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
-    curl
+    curl \
+    nodejs \
+    npm
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -29,6 +31,9 @@ COPY --chown=www-data:www-data . /var/www
 
 # Install composer dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# Install npm dependencies and build assets
+RUN npm install && npm run build
 
 # Expose port
 EXPOSE 8000
